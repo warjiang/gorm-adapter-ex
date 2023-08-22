@@ -41,14 +41,15 @@ const disableMigrateKey = "disableMigrateKey"
 const customTableKey = "customTableKey"
 
 type CasbinRule struct {
-	ID    uint   `gorm:"primaryKey;autoIncrement"`
-	Ptype string `gorm:"size:100"`
-	V0    string `gorm:"size:100"`
-	V1    string `gorm:"size:100"`
-	V2    string `gorm:"size:100"`
-	V3    string `gorm:"size:100"`
-	V4    string `gorm:"size:100"`
-	V5    string `gorm:"size:100"`
+	ID        uint           `gorm:"primaryKey;autoIncrement"`
+	Ptype     string         `gorm:"size:100"`
+	V0        string         `gorm:"size:100"`
+	V1        string         `gorm:"size:100"`
+	V2        string         `gorm:"size:100"`
+	V3        string         `gorm:"size:100"`
+	V4        string         `gorm:"size:100"`
+	V5        string         `gorm:"size:100"`
+	DeletedAt gorm.DeletedAt `gorm:"column:deleted_at" json:"deleted_at"`
 }
 
 func (CasbinRule) TableName() string {
@@ -93,7 +94,7 @@ func finalizer(a *Adapter) {
 	}
 }
 
-//Select conn according to table name（use map store name-index）
+// Select conn according to table name（use map store name-index）
 type specificPolicy int
 
 func (p *specificPolicy) Resolve(connPools []gorm.ConnPool) gorm.ConnPool {
@@ -113,8 +114,10 @@ func (dbPool *DbPool) switchDb(dbName string) *gorm.DB {
 
 // NewAdapter is the constructor for Adapter.
 // Params : databaseName,tableName,dbSpecified
-//			databaseName,{tableName/dbSpecified}
-//			{database/dbSpecified}
+//
+//	databaseName,{tableName/dbSpecified}
+//	{database/dbSpecified}
+//
 // databaseName and tableName are user defined.
 // Their default value are "casbin" and "casbin_rule"
 //
